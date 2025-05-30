@@ -53,7 +53,13 @@ export default function MovieModal({
         </button>
         {children}
         <img
-          src={`https://image.tmdb.org/t/p/w500${movie.backdrop_path}`}
+          src={
+            movie.backdrop_path
+              ? `https://image.tmdb.org/t/p/w500${movie.backdrop_path}`
+              : movie.poster_path
+              ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+              : "https://via.placeholder.com/500x300?text=No+Image"
+          }
           alt={movie.title}
           className={css.image}
         />
