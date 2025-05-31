@@ -3,7 +3,7 @@ import MovieGrid from "../MovieGrid/MovieGrid.tsx";
 import type { Movie } from "../../types/movie";
 import css from "../App/App.module.css";
 import toast from "react-hot-toast";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { fetchMovies } from "../../services/movieService.ts";
 import Loader from "../Loader/Loader.tsx";
 import ErrorMessage from "../ErrorMessage/ErrorMessage.tsx";
@@ -25,8 +25,13 @@ export default function App() {
   });
   const totalPages = data?.total_pages ?? 0;
 
-  const handleSearch = async (newQuery: string) => {
-    setQuery(newQuery);
+  const handleSearch = (formData: FormData) => {
+    const query = (formData.get("query") as string).trim();
+
+    if (query === "") {
+      toast.error("Please enter your search query");
+    }
+    setQuery(query);
     setPage(1);
   };
 
@@ -39,14 +44,17 @@ export default function App() {
     setIsModalOpen(false);
     setSelectedMovie(null);
   };
+
+  useEffect(() => {
+    if (isSuccess && data?.results.length === 0) {
+      toast.error("No movies found for your request.");
+    }
+  }, [isSuccess, data]);
   return (
     <div className={css.app}>
-      <SearchBar onSubmit={handleSearch} />
+      <SearchBar action={handleSearch} />
       {isLoading && <Loader />}
       {isError && <ErrorMessage />}
-      {isSuccess &&
-        data.results.length === 0 &&
-        toast.error("No movies found for your request.")}
       {isSuccess && totalPages > 1 && (
         <ReactPaginate
           pageCount={totalPages}

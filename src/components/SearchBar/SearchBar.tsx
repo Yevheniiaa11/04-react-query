@@ -3,10 +3,10 @@ import toast, { Toaster } from "react-hot-toast";
 import type { FormEvent } from "react";
 
 interface SearchBarProps {
-  onSubmit: (value: string) => void;
+  action: (formData: FormData) => void;
 }
 
-export default function SearchBar({ onSubmit }: SearchBarProps) {
+export default function SearchBar({ action }: SearchBarProps) {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -17,7 +17,7 @@ export default function SearchBar({ onSubmit }: SearchBarProps) {
       toast.error("Please enter your search query.");
       return;
     }
-    onSubmit(query);
+    action(formData);
   };
   return (
     <header className={styles.header}>
